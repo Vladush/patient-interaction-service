@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "healthtech-innovators-task"
+packages = [{include = "app"}]
+version = "0.1.0"
+description = "Patient Documentation System"
+authors = ["Vladimir Orlinski <vladimir@orlin.ski>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0"}
+sqlmodel = "^0.0.14"
+pydantic-settings = "^2.1.0"
+email-validator = "^2.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+httpx = "^0.26.0"
+black = "^24.1.0"
+isort = "^5.13.0"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
