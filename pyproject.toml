@@ -27,5 +27,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.isort]
 profile = "black"
 
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"
+
 [tool.mypy]
 strict = true
