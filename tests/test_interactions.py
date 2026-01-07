@@ -1,15 +1,18 @@
 import uuid
-from datetime import date, timedelta
 
 from fastapi.testclient import TestClient
-from sqlmodel import Session
 
 
 # Helper to create a patient
 def create_patient(client: TestClient) -> str:
     response = client.post(
         "/api/v1/patients/",
-        json={"first_name": "John", "last_name": "Doe", "date_of_birth": "1980-01-01", "gender": "Male"},
+        json={
+            "first_name": "John",
+            "last_name": "Doe",
+            "date_of_birth": "1980-01-01",
+            "gender": "Male",
+        },
     )
     assert response.status_code == 201
     return response.json()["id"]
@@ -61,8 +64,6 @@ def test_read_patient_history(client: TestClient):
         json={"patient_id": patient_id, "outcome": "Critical", "notes": "Second"},
     )
 
-
-
     response = client.get(f"/api/v1/interactions/?patient_id={patient_id}")
     data = response.json()
 
@@ -83,17 +84,17 @@ def test_read_history_patient_not_found(client: TestClient):
 
 def test_delete_patient(client: TestClient):
     patient_id = create_patient(client)
-    
+
     # Create an interaction to ensure it gets deleted
     client.post(
         "/api/v1/interactions/",
         json={"patient_id": patient_id, "outcome": "Healthy", "notes": "To be deleted"},
     )
-    
+
     # Delete Patient
     response = client.delete(f"/api/v1/patients/{patient_id}")
     assert response.status_code == 204
-    
+
     # Verify Patient Gone
     # Best proxy: Check history returns empty list (Patient not found logic removed)
     response = client.get(f"/api/v1/interactions/?patient_id={patient_id}")
@@ -103,23 +104,23 @@ def test_delete_patient(client: TestClient):
 
 def test_delete_interaction(client: TestClient):
     patient_id = create_patient(client)
-    
+
     # Create an interaction
     response = client.post(
         "/api/v1/interactions/",
         json={"patient_id": patient_id, "outcome": "Healthy", "notes": "To be deleted"},
     )
     interaction_id = response.json()["id"]
-    
+
     # Delete Interaction
     response = client.delete(f"/api/v1/interactions/{interaction_id}")
     assert response.status_code == 204
-    
+
     # Verify Interaction Gone from History
     response = client.get(f"/api/v1/interactions/?patient_id={patient_id}")
     data = response.json()
     assert len(data) == 0
-    
+
     # Verify Patient Still Exists (optional, but good sanity check)
     # Trying to create another interaction should succeed
     response = client.post(
@@ -138,21 +139,21 @@ def test_configurable_outcomes(client: TestClient):
         json={"patient_id": patient_id, "outcome": "Recovered", "notes": "New"},
     )
     assert response.status_code == 400
-    
+
     # Configure "Recovered"
     response = client.post("/api/v1/outcomes/", json={"code": "Recovered"})
     assert response.status_code == 201
-    
+
     # Try "Recovered" again -> Should Success
     response = client.post(
         "/api/v1/interactions/",
         json={"patient_id": patient_id, "outcome": "Recovered", "notes": "New"},
     )
     assert response.status_code == 201
-    
+
     # Verify History is Intact after Deletion
     client.delete("/api/v1/outcomes/Recovered")
-    
+
     history = client.get(f"/api/v1/interactions/?patient_id={patient_id}")
     data = history.json()
     assert len(data) > 0
@@ -161,11 +162,11 @@ def test_configurable_outcomes(client: TestClient):
 
 def test_update_patient(client: TestClient):
     patient_id = create_patient(client)
-    
+
     # Update Name
     response = client.put(
         f"/api/v1/patients/{patient_id}",
-        json={"first_name": "Jane", "last_name": "Smith"}
+        json={"first_name": "Jane", "last_name": "Smith"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -176,18 +177,18 @@ def test_update_patient(client: TestClient):
 
 def test_update_interaction(client: TestClient):
     patient_id = create_patient(client)
-    
+
     # Create Interaction
     response = client.post(
         "/api/v1/interactions/",
         json={"patient_id": patient_id, "outcome": "Healthy", "notes": "Original"},
     )
     interaction_id = response.json()["id"]
-    
+
     # Update Notes and Outcome
     response = client.put(
         f"/api/v1/interactions/{interaction_id}",
-        json={"outcome": "Critical", "notes": "Updated Note"}
+        json={"outcome": "Critical", "notes": "Updated Note"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -198,12 +199,14 @@ def test_update_interaction(client: TestClient):
 def test_update_outcome(client: TestClient):
     # Create Outcome
     code = "CustomStatus"
-    client.post("/api/v1/outcomes/", json={"code": code, "description": "Original Desc"})
-    
+    client.post(
+        "/api/v1/outcomes/",
+        json={"code": code, "description": "Original Desc"},
+    )
+
     # Update Description
     response = client.put(
-        f"/api/v1/outcomes/{code}",
-        json={"code": code, "description": "Updated Desc"}
+        f"/api/v1/outcomes/{code}", json={"code": code, "description": "Updated Desc"}
     )
     assert response.status_code == 200
     data = response.json()

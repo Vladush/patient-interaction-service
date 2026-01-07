@@ -1,8 +1,8 @@
+import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-import asyncio
-from fastapi import FastAPI, Depends, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from sqlmodel import Session, text
 
 from app.api.v1.api import api_router
@@ -15,8 +15,9 @@ async def lifespan(app: FastAPI):
     yield
 
 
-
-API_DESCRIPTION = "Patient Documentation System API. System-strict, Audit-ready, RESTful."
+API_DESCRIPTION = (
+    "Patient Documentation System API. System-strict, Audit-ready, RESTful."
+)
 
 tags_metadata = [
     {"name": "patients", "description": "Patient demographics."},
@@ -41,18 +42,18 @@ async def chaos_middleware(request: Request, call_next):
     Header 'X-Simulation-Mode': 'error' | 'latency'
     """
     simulation_mode = request.headers.get("X-Simulation-Mode")
-    
+
     if simulation_mode == "error":
         # Simulate catastrophic failure
         return Response(
-            content=f"Simulated Failure Triggered via X-Simulation-Mode: {simulation_mode}",
+            content=f"Simulated Failure: {simulation_mode}",
             status_code=503,
         )
-        
+
     if simulation_mode == "latency":
         # Simulate network lag
         await asyncio.sleep(2.0)
-        
+
     response = await call_next(request)
     return response
 
@@ -65,14 +66,14 @@ def health_check(detail: bool = False, session: Session = Depends(get_session)):
     """Health check endpoint."""
     if not detail:
         return {"status": "ok"}
-        
+
     health_status = {
         "status": "ok",
         "version": app.version,
         "database": "unknown",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    
+
     try:
         session.exec(text("SELECT 1"))
         health_status["database"] = "connected"
@@ -80,5 +81,5 @@ def health_check(detail: bool = False, session: Session = Depends(get_session)):
         health_status["status"] = "degraded"
         health_status["database"] = "disconnected"
         health_status["error"] = str(e)
-        
+
     return health_status

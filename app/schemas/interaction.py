@@ -12,6 +12,7 @@ class InteractionCreate(InteractionBase):
 
 class InteractionUpdate(InteractionBase):
     """Schema for updating an interaction."""
+
     notes: str | None = None
     outcome: str | None = None
 

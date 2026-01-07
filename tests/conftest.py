@@ -22,9 +22,10 @@ def session_fixture() -> Generator[Session, None, None]:
     Creates a fresh database for each test.
     """
     SQLModel.metadata.create_all(engine)
-    
+
     # Seed default outcomes for testing
     from app.models.outcome import Outcome
+
     with Session(engine) as seed_session:
         defaults = ["Healthy", "Monitor", "Critical"]
         for code in defaults:

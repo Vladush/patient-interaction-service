@@ -28,5 +28,6 @@ class Patient(PatientBase, table=True):
 
     # Relationship to interactions
     interactions: List["Interaction"] = Relationship(
-        back_populates="patient", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+        back_populates="patient",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )

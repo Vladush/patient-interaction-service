@@ -8,8 +8,10 @@ from app.models import Outcome
 # SQLite specific argument to allow multi-threaded access in Dev
 connect_args = {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
 
-# echo=True logs SQL queries to console, useful for debugging during the task
-engine = create_engine(settings.DATABASE_URL, connect_args=connect_args, echo=settings.DB_ECHO)
+# echo=True logs SQL queries to console
+engine = create_engine(
+    settings.DATABASE_URL, connect_args=connect_args, echo=settings.DB_ECHO
+)
 
 
 def get_session() -> Generator[Session, None, None]:
@@ -28,7 +30,7 @@ def init_db() -> None:
     """
     # TODO: Switch to Alembic for proper migration management in prod
     SQLModel.metadata.create_all(engine)
-    
+
     # Seed default outcomes
     with Session(engine) as session:
         defaults = ["Healthy", "Monitor", "Critical"]
