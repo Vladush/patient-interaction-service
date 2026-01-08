@@ -15,7 +15,7 @@ RUN pip install poetry poetry-plugin-export
 
 COPY pyproject.toml poetry.lock* ./
 
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with dev
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM python:3.11-slim AS runner
 

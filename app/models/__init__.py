@@ -1,3 +1,4 @@
-from .interaction import Interaction
-from .outcome import Outcome
-from .patient import Gender, Patient
+from .interaction import Interaction as Interaction
+from .outcome import Outcome as Outcome
+from .patient import Gender as Gender
+from .patient import Patient as Patient

@@ -50,11 +50,11 @@ If you wish to run locally without Docker:
    poetry run uvicorn app.main:app --reload
    ```
 
-3. Run static analysis:
+3. Run linting/formatting:
 
    ```bash
-   poetry run black .
-   poetry run isort .
+   poetry run ruff check .
+   poetry run ruff format .
    poetry run mypy app
    ```
 

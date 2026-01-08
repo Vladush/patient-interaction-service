@@ -60,10 +60,10 @@ def update_outcome(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Outcome not found"
         )
-    
+
     if outcome_update.description is not None:
         db_outcome.description = outcome_update.description
-        
+
     session.add(db_outcome)
     session.commit()
     session.refresh(db_outcome)

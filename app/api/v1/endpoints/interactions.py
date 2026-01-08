@@ -6,7 +6,11 @@ from sqlmodel import Session, select
 
 from app.core.database import get_session
 from app.models import Interaction, Outcome, Patient
-from app.schemas.interaction import InteractionCreate, InteractionRead, InteractionUpdate
+from app.schemas.interaction import (
+    InteractionCreate,
+    InteractionRead,
+    InteractionUpdate,
+)
 
 router = APIRouter()
 
@@ -25,7 +29,7 @@ def create_interaction(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Patient with ID {interaction.patient_id} not found",
         )
-        
+
     # TODO: Move this validation logic to a service layer
     _validate_outcome(session, interaction.outcome)
 
@@ -51,7 +55,7 @@ def read_interactions(
 
     if patient_id:
         statement = statement.where(Interaction.patient_id == patient_id)
-    
+
     if outcome:
         statement = statement.where(Interaction.outcome == outcome)
 

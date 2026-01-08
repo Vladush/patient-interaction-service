@@ -43,7 +43,7 @@ The API follows RESTful principles:
 - **Docker**: Multi-stage build (Builder pattern) to minimize image size and improve security.
 - **Configuration**: Environment variables management via `pydantic-settings`.
 
-# Security & Future Roadmap
+## Security & Future Roadmap
 
 - **Authentication**: RBAC (Viewer, Provider, Admin) is **designed but not currently enforced**. This is a Proof of Concept limitation.
 - **Audit Logging**: Planned for future implementation.
