@@ -10,8 +10,10 @@ venv/
 .coveragerc
 .coverage
 htmlcov/
+.snapshots/
+
 dist/
 build/
 *.egg-info/
 .mypy_cache/
-.snapshots/
+
